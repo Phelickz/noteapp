@@ -24,18 +24,18 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Note> items = new List();
   NotesDatabase db = NotesDatabase.db;
-
-  // @override
-  // void initState(){
-  //   super.initState();
-  //   db.getAllClients().then((notes){
-  //     setState((){
-  //       notes.forEach((note){
-  //         items.add(Note.fromMap(notes);
-  //       });
-  //     });
-  //   });
-  // }
+//for the search bar functionality
+  @override
+  void initState(){
+    super.initState();
+    db.getAllClients().then((notes){
+      setState((){
+        notes.forEach((note){
+          items.add(Note.fromMap(note.toMap()));
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,12 +197,14 @@ class _Notetext extends StatelessWidget {
       style: TextStyle(
         color: Colors.black
       ),
-      maxLines: 300,
+      maxLines: 2,
       overflow: TextOverflow.ellipsis,
       
     );
   }
 }
+
+//class for the search bar functionality
 
 class DataSearch extends SearchDelegate<Note>{
   NotesDatabase db = NotesDatabase.db;
@@ -210,13 +212,13 @@ class DataSearch extends SearchDelegate<Note>{
   List<Note> suggestion = new List();
   DataSearch(this.items);
 
-  @override 
-  ThemeData appBarTheme(BuildContext context){
-    assert(context != null);
-    final ThemeData theme = Theme.of(context);
-    assert (theme!=null);
-    return theme;
-  }
+  // @override 
+  // ThemeData appBarTheme(BuildContext context){
+  //   assert(context != null);
+  //   final ThemeData theme = Theme.of(context);
+  //   assert (theme!=null);
+  //   return theme;
+  // }
 
   @override
   List<Widget> buildActions(BuildContext context){
@@ -252,12 +254,28 @@ class DataSearch extends SearchDelegate<Note>{
     {
       print('Null');
     }
-    return ListView.builder(
-      itemBuilder: (context, position) =>
-      ListTile(
-        title: Text(suggestion[position].title),
-      ),
+    return FutureBuilder(
+        future: NotesDatabase.db.getAllClients(),
+        builder: (BuildContext context, AsyncSnapshot<List<Note>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                Note item = snapshot.data[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NotePage(NoteMode.Editing, item))
+                    );
+                  },
+              child: ListTile(
+          title: Text(suggestion[index].title),
+        ),
+      );},
       itemCount: suggestion.length,
     );
+  }return Center(child: CircularProgressIndicator());
   }
+  );
+}
 }
