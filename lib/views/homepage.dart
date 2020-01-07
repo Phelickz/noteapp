@@ -122,22 +122,26 @@ class _NoteListState extends State<NoteList> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 30.0, bottom: 30, left: 13.0, right: 22.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[ Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            _NoteTitle(item.title),
-                            Container(height: 4,),
-                            _Notetext(item.content)
-                          ],
-                        ),
-                        IconButton(icon: Icon(Icons.delete), onPressed: (){
+                      child: new SingleChildScrollView(
+                                              child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[ new Flexible(
+                                                      child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                _NoteTitle(item.title),
+                                Container(height: 4,),
+                                _Notetext(item.content)
+                              ],
+                            ),
+                          ),
+                          IconButton(icon: Icon(Icons.delete), onPressed: (){
                 NotesDatabase.db.deleteNote(item.id);
                 //reload page
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                   builder: (context) => Home()), (Route<dynamic> route)=>false);
               },)]
+                        ),
                       ),
                     ),
                   ),
