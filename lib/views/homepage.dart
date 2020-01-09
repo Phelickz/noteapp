@@ -106,12 +106,17 @@ class _NoteListState extends State<NoteList> {
         future: NotesDatabase.db.getAllClients(),
         builder: (BuildContext context, AsyncSnapshot<List<Note>> snapshot) {
           if (snapshot.hasData) {
+            if (snapshot.data.isEmpty){
+              return Center(child: Text('Create a Note +',
+               style: TextStyle(fontSize: 30, color: Colors.brown, fontWeight: FontWeight.bold),),);
+            }else
             return Container(
               height: 400,
               margin: EdgeInsets.only(top: 50),
               child: Swiper(
-                layout: SwiperLayout.STACK,
+               // layout: SwiperLayout.TINDER,
                 itemWidth: 345,
+                //itemHeight: 250,
                 itemBuilder: (BuildContext context, int index) {
                   Note item = snapshot.data[index];
                   return GestureDetector(
@@ -166,7 +171,7 @@ class _NoteListState extends State<NoteList> {
               ),
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(), );
         },
       );
         
