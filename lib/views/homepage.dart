@@ -108,10 +108,10 @@ class _NoteListState extends State<NoteList> {
           if (snapshot.hasData) {
             return Container(
               height: 400,
-              margin: EdgeInsets.only(top: 60),
+              margin: EdgeInsets.only(top: 50),
               child: Swiper(
                 layout: SwiperLayout.STACK,
-                itemWidth: 370,
+                itemWidth: 345,
                 itemBuilder: (BuildContext context, int index) {
                   Note item = snapshot.data[index];
                   return GestureDetector(
@@ -142,7 +142,10 @@ class _NoteListState extends State<NoteList> {
                                       margin: EdgeInsets.only(top: 20),
                                       child: _NoteTitle(item.title)),
                                     Container(height: 70,),
-                                    _Notetext(item.content)
+                                    _Notetext(item.content),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 100),
+                                      child: Text('Swipe>>>', style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),)),
                                   ],
                                 ),
                               ),
