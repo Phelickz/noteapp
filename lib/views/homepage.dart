@@ -8,6 +8,7 @@ import 'package:noteapp/service.dart';
 import 'package:noteapp/state/notestate.dart';
 import 'package:provider/provider.dart';
 import 'notepage.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 
 
 // enum NoteMode{
@@ -105,49 +106,61 @@ class _NoteListState extends State<NoteList> {
         future: NotesDatabase.db.getAllClients(),
         builder: (BuildContext context, AsyncSnapshot<List<Note>> snapshot) {
           if (snapshot.hasData) {
-            return ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                Note item = snapshot.data[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NotePage(NoteMode.Editing, item))
-                    );
-                  },
-                  
-                  child: Card(
-                    color: redColor,
-                    margin: EdgeInsets.only( right: 12, left: 12, bottom: 12, top: 3),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 30.0, bottom: 30, left: 13.0, right: 22.0),
-                      child: new SingleChildScrollView(
-                                              child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[ new Flexible(
-                                                      child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                _NoteTitle(item.title),
-                                Container(height: 4,),
-                                _Notetext(item.content)
-                              ],
+            return Container(
+              height: 400,
+              margin: EdgeInsets.only(top: 60),
+              child: Swiper(
+                layout: SwiperLayout.STACK,
+                itemWidth: 370,
+                itemBuilder: (BuildContext context, int index) {
+                  Note item = snapshot.data[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NotePage(NoteMode.Editing, item))
+                      );
+                    },
+                    
+                    child: Container(
+                      height: 300,
+                      child: Card(
+                        
+                        color: redColor,
+                        margin: EdgeInsets.only( right: 12, left: 12, bottom: 12, top: 3),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 30.0, bottom: 30, left: 13.0, right: 22.0),
+                          child: new SingleChildScrollView(
+                                                  child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[ new Flexible(
+                                                          child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 20),
+                                      child: _NoteTitle(item.title)),
+                                    Container(height: 70,),
+                                    _Notetext(item.content)
+                                  ],
+                                ),
+                              ),
+                              IconButton(icon: Icon(Icons.delete), onPressed: (){
+                  NotesDatabase.db.deleteNote(item.id);
+                  //reload page
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                      builder: (context) => Home()), (Route<dynamic> route)=>false);
+                },)]
                             ),
                           ),
-                          IconButton(icon: Icon(Icons.delete), onPressed: (){
-                NotesDatabase.db.deleteNote(item.id);
-                //reload page
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                  builder: (context) => Home()), (Route<dynamic> route)=>false);
-              },)]
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-              itemCount: snapshot.data.length,
+                  );
+                },
+                itemCount: snapshot.data.length,
+              ),
             );
           }
           return Center(child: CircularProgressIndicator());
@@ -180,7 +193,7 @@ class _NoteTitle extends StatelessWidget {
     return Text(
       _title,
       style: TextStyle(
-        fontSize: 25,
+        fontSize: 35,
         fontWeight: FontWeight.bold
       ),
     );
@@ -195,9 +208,10 @@ class _Notetext extends StatelessWidget {
     return Text(
       _content,
       style: TextStyle(
+        fontSize: 17,
         color: Colors.black
       ),
-      maxLines: 2,
+      maxLines: 3,
       overflow: TextOverflow.ellipsis,
       
     );
